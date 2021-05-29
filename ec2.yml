@@ -1,0 +1,22 @@
+---
+- name: "Create an ec2-instance instance"
+  hosts: localhost
+  become: true
+  vars_files:
+    - ec2.vars
+  tasks:
+    
+    - name: "Create keypair"
+      ec2_key:
+        name: "ansible-key"
+        aws_access_key: "{{ access_key }}"
+        aws_secret_key: "{{ secret_key }}"
+        region: "{{ reg }}"
+      register: key_result
+        
+    - name: "Saving private key"
+      when: key_result.changed
+      copy:
+        content: "{{ key_result.key.private_key }}"
+        dest: ./ansible-key.pem
+        mode: 0400
