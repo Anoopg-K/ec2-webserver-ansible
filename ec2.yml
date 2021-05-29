@@ -20,3 +20,25 @@
         content: "{{ key_result.key.private_key }}"
         dest: ./ansible-key.pem
         mode: 0400
+            
+    - name: "Create security group"
+      ec2_group:
+        name: "web-sg"
+        description: "Allow 22, 80 and 443"
+        aws_access_key: "{{ access_key }}"
+        aws_secret_key: "{{ secret_key }}"
+        region: "{{ reg }}"
+        rules:
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 0.0.0.0/0
+          - proto: tcp
+            from_port: 443
+            to_port: 443
+            cidr_ip: 0.0.0.0/0
+      register: sg_result
