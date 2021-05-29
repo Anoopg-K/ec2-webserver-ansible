@@ -42,3 +42,24 @@
             to_port: 443
             cidr_ip: 0.0.0.0/0
       register: sg_result
+        
+    - name: "Create ec2-instance"
+      ec2:
+        aws_access_key: "{{ access_key }}"
+        aws_secret_key: "{{ secret_key }}"
+        region: "{{ reg }}"
+        key_name: "{{ key_result.key.name }}"
+        group_id: "{{ sg_result.group_id }}"
+        instance_type: "{{ type }}"
+        image: "{{ ami }}"
+        wait: yes
+        instance_tags:
+          Name: webserver
+        count_tag:
+          Name: webserver
+        exact_count: 1
+      register: ec2_result
+
+    - name: "debug"
+      debug:
+        var: ec2_result
